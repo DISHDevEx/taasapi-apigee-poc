@@ -2,7 +2,7 @@
     "deployment_action": "deploy",
     "deployment_targets": {
         "dev": {
-            "accounts": [],
+            "accounts": ["968504157731"],
             "variables": []
         },
         "test": {
@@ -16,12 +16,12 @@
     },
     "templates": [
         {
-            "name": "",
+            "name": "taasapipocdev.yml",
             "dev": {
                 "regions": [
                     {
-                        "region": "",
-                        "param_file": ""
+                        "region": "us-east-1",
+                        "param_file": "taasapipoc-parameter-dev.json"
                     }
                 ]
             },

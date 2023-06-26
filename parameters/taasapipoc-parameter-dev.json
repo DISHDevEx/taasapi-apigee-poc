@@ -1,0 +1,7 @@
+{
+    "Parameters": {
+        "ApplicationName": "dish-wireless",
+        "slackEmail": "demo-aaaajnw4ewddias554wvk6jcfe@sd.org.slack.com",
+        "orgEmail": "akhil.kanugolu@dish.com"
+    }
+}
