@@ -1,0 +1,47 @@
+{
+    "deployment_action": "deploy",
+    "deployment_targets": {
+        "dev": {
+            "accounts": [],
+            "variables": []
+        },
+        "test": {
+            "accounts": [],
+            "variables": []
+        },
+        "prod": {
+            "accounts": [],
+            "variables": []
+        }
+    },
+    "templates": [
+        {
+            "name": "",
+            "dev": {
+                "regions": [
+                    {
+                        "region": "",
+                        "param_file": ""
+                    }
+                ]
+            },
+            "test": {
+                "regions": [
+                    {
+                        "region": "",
+                        "param_file": ""
+                    }
+                ]
+            }
+        }
+    ],
+    "scripts": {
+        "pre_deploy": [],
+        "post_deploy": []
+    },
+    "cft_capabilities": [
+        "CAPABILITY_IAM",
+        "CAPABILITY_NAMED_IAM"
+    ],
+    "cfn_deployer_role_name": "dish-dp-CICDAcctCodePipelineCloudFormationRole"
+}
