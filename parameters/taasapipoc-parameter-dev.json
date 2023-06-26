@@ -1,6 +1,7 @@
 {
     "Parameters": {
         "ApplicationName": "dish-wireless",
+        "snsTopicName": "Taas-api-poc-sns-notify",
         "slackEmail": "demo-aaaajnw4ewddias554wvk6jcfe@sd.org.slack.com",
         "orgEmail": "akhil.kanugolu@dish.com",
         "firstLambdaName": "taasapi-poc-response-cft-lambda",

@@ -14,6 +14,9 @@ Parameters:
   iamRoleName:
     Description: IAM Role Name
     Type: String
+  snsTopicName:
+    Description: IAM Role Name
+    Type: String
   firstLambdaName:
     Description: First Lambda Name
     Type: String
@@ -35,17 +38,16 @@ Parameters:
 
 Resources:
   #SNS Topic
-  # SnsTopic:
-  #   Type: AWS::SNS::Topic
-  #   Properties:
-  #     DisplayName: Keysight Test Enginee Notification
-  #     TopicName: TaasApiSnsNotify
-  #     Subscription:
-  #       - Protocol: email
-  #         Endpoint: !Ref slackEmail
-  #       - Protocol: email
-  #         Endpoint: !Ref orgEmail
-  # check
+  SnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Keysight Test Enginee Notification
+      TopicName: !Ref snsTopicName
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref slackEmail
+        - Protocol: email
+          Endpoint: !Ref orgEmail
 
   ResponseLambdaFunction:
     Type: AWS::Lambda::Function
@@ -55,15 +57,9 @@ Resources:
       Description: Returns Response to ALB
       FunctionName: !Ref firstLambdaName
       Code:
-        ZipFile: |
-          import json
-    
-          def lambda_handler(event, context):
-              return {
-                  'statusCode': 200,
-                  'body': json.dumps('Hello from Lambda!')
-              }
-      Handler: index.lambda_handler
+        S3Bucket: !Sub ${GlueJobScriptBucket}
+        S3Key: !Sub "${ApplicationName}/glue/script/lambda-zips/response_function.zip"
+      Handler: lambda_function.lambda_handler
       Role: !GetAtt MyLambdaExecutionRole.Arn
       Runtime: python3.8
       Timeout: 60
@@ -78,15 +74,9 @@ Resources:
       Description: Connects to EC2
       FunctionName: !Ref secondLambdaName
       Code:
-        ZipFile: |
-          import json
-    
-          def lambda_handler(event, context):
-              return {
-                  'statusCode': 200,
-                  'body': json.dumps('Hello from Lambda!')
-              }
-      Handler: index.lambda_handler
+        S3Bucket: !Sub ${GlueJobScriptBucket}
+        S3Key: !Sub "${ApplicationName}/glue/script/lambda-zips/connect_function.zip"
+      Handler: lambda_function.lambda_handler
       Role: !GetAtt MyLambdaExecutionRole.Arn
       Runtime: python3.8
       Timeout: 60
@@ -104,18 +94,12 @@ Resources:
     DependsOn: MyLambdaExecutionRole
 
     Properties:
-      Description: Connects to EC2
+      Description: Updates the Jira
       FunctionName: !Ref thirdLambdaName
       Code:
-        ZipFile: |
-          import json
-    
-          def lambda_handler(event, context):
-              return {
-                  'statusCode': 200,
-                  'body': json.dumps('Hello from Lambda!')
-              }
-      Handler: index.lambda_handler
+        S3Bucket: !Sub ${GlueJobScriptBucket}
+        S3Key: !Sub "${ApplicationName}/glue/script/lambda-zips/update_function.zip"
+      Handler: lambda_function.lambda_handler
       Role: !GetAtt MyLambdaExecutionRole.Arn
       Runtime: python3.8
       Timeout: 60
