@@ -2,27 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: "Deploy TaasApi Resources"
 
 Parameters:
-  ApplicationName:
-    Description: Application
-    Type: String
-  slackEmail:
-    Description: Slack Email address 
-    Type: String
-  orgEmail:
-    Description: Org Email address 
-    Type: String
-  iamRoleName:
-    Description: IAM Role Name
-    Type: String
-  firstLambdaName:
-    Description: First Lambda Name
-    Type: String
   secondLambdaName:
     Description: Second Lambda Name
     Type: String
-  thirdLambdaName:
-    Description: Third Lambda Name
-    Type: String
+
   firstConnectSubnet:
     Description: Subnet
     Type: String
@@ -34,46 +17,9 @@ Parameters:
     Type: String
 
 Resources:
-  #SNS Topic
-  # SnsTopic:
-  #   Type: AWS::SNS::Topic
-  #   Properties:
-  #     DisplayName: Keysight Test Enginee Notification
-  #     TopicName: TaasApiSnsNotify
-  #     Subscription:
-  #       - Protocol: email
-  #         Endpoint: !Ref slackEmail
-  #       - Protocol: email
-  #         Endpoint: !Ref orgEmail
-  # check
-
-  ResponseLambdaFunction:
-    Type: AWS::Lambda::Function
-    DependsOn: MyLambdaExecutionRole
-
-    Properties:
-      Description: Returns Response to ALB
-      FunctionName: !Ref firstLambdaName
-      Code:
-        ZipFile: |
-          import json
-    
-          def lambda_handler(event, context):
-              return {
-                  'statusCode': 200,
-                  'body': json.dumps('Hello from Lambda!')
-              }
-      Handler: index.lambda_handler
-      Role: !GetAtt MyLambdaExecutionRole.Arn
-      Runtime: python3.8
-      Timeout: 60
-      Layers:
-        - !Ref TaasJiraLayer
 
   ConnectLambdaFunction:
     Type: AWS::Lambda::Function
-    DependsOn: MyLambdaExecutionRole
-
     Properties:
       Description: Connects to EC2
       FunctionName: !Ref secondLambdaName
@@ -87,79 +33,12 @@ Resources:
                   'body': json.dumps('Hello from Lambda!')
               }
       Handler: index.lambda_handler
-      Role: !GetAtt MyLambdaExecutionRole.Arn
+      Role: arn:aws:iam::968504157731:role/5g-defender-automation-role
       Runtime: python3.8
       Timeout: 60
-      Layers:
-        - !Ref TaasJiraLayer
       VpcConfig:
         SecurityGroupIds:
           - !Ref firstConnectsg
           - !Ref secondConnectsg
         SubnetIds:
           - !Ref firstConnectSubnet
-
-  UpdateLambdaFunction:
-    Type: AWS::Lambda::Function
-    DependsOn: MyLambdaExecutionRole
-
-    Properties:
-      Description: Connects to EC2
-      FunctionName: !Ref thirdLambdaName
-      Code:
-        ZipFile: |
-          import json
-    
-          def lambda_handler(event, context):
-              return {
-                  'statusCode': 200,
-                  'body': json.dumps('Hello from Lambda!')
-              }
-      Handler: index.lambda_handler
-      Role: !GetAtt MyLambdaExecutionRole.Arn
-      Runtime: python3.8
-      Timeout: 60
-      Layers:
-        - !Ref TaasJiraLayer
-   
-  MyLambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Ref iamRoleName
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          -
-            Effect: "Allow"
-            Principal:
-              Service:
-                - "lambda.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
-        - arn:aws:iam::aws:policy/AmazonS3FullAccess
-        - arn:aws:iam::aws:policy/AmazonSNSFullAccess
-        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
-
-      Policies:
-        - PolicyName: LambdaVpcAccessPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ec2:CreateNetworkInterface
-                  - ec2:DescribeNetworkInterfaces
-                  - ec2:DeleteNetworkInterface
-                Resource: "*"
-  TaasJiraLayer:
-    Type: AWS::Lambda::LayerVersion
-    Properties:
-      Content:
-        S3Bucket: taasapi-saas-poc
-        S3Key: layer/JiraLayer.zip
-      CompatibleRuntimes:
-        - python3.8
