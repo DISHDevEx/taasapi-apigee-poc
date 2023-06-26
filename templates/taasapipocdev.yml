@@ -88,9 +88,9 @@ Resources:
       Timeout: 60
       Layers:
         - !Ref TaasJiraLayer
-            Environment:
-      Variables:
-        env_invoke_jira_lambda: !Ref thirdLambdaName
+      Environment:
+        Variables:
+          env_invoke_jira_lambda: !Ref thirdLambdaName
       VpcConfig:
         SecurityGroupIds:
           - !Ref firstConnectsg
