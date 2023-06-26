@@ -11,6 +11,18 @@ Parameters:
   orgEmail:
     Description: Org Email address 
     Type: String
+  iamRoleName:
+    Description: IAM Role Name
+    Type: String
+  firstLambdaName:
+    Description: First Lambda Name
+    Type: String
+  secondLambdaName:
+    Description: Second Lambda Name
+    Type: String
+  thirdLambdaName:
+    Description: Third Lambda Name
+    Type: String
 
 Resources:
   #SNS Topic
@@ -32,7 +44,7 @@ Resources:
 
     Properties:
       Description: Returns Response to ALB
-      FunctionName: taasapi-response-cft-lambda
+      FunctionName: !Ref firstLambdaName
       Code:
         ZipFile: |
           import json
@@ -55,7 +67,7 @@ Resources:
 
     Properties:
       Description: Connects to EC2
-      FunctionName: taasapi-connect-cft-lambda
+      FunctionName: !Ref secondLambdaName
       Code:
         ZipFile: |
           import json
@@ -84,7 +96,7 @@ Resources:
 
     Properties:
       Description: Connects to EC2
-      FunctionName: taasapi-connect-cft-lambda
+      FunctionName: !Ref thirdLambdaName
       Code:
         ZipFile: |
           import json
@@ -104,7 +116,7 @@ Resources:
   MyLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: taasapi-lambda-cft-role-1
+      RoleName: !Ref iamRoleNam
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:

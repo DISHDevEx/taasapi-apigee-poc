@@ -2,6 +2,11 @@
     "Parameters": {
         "ApplicationName": "dish-wireless",
         "slackEmail": "demo-aaaajnw4ewddias554wvk6jcfe@sd.org.slack.com",
-        "orgEmail": "akhil.kanugolu@dish.com"
+        "orgEmail": "akhil.kanugolu@dish.com",
+        "firstLambdaName": "taasapi-response-cft-lambda",
+        "secondLambdaName": "taasapi-response-cft-lambda",
+        "thirdLambdaName": "taasapi-response-cft-lambda",
+        "iamRoleName": "taasapi-lambda-cft-role-1" 
+
     }
 }
