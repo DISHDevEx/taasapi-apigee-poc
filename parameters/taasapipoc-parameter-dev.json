@@ -1,6 +1,6 @@
 {
     "Parameters": {
-        "ApplicationName": "dish-wireless",
+        "GlueJobScriptBucket":"dish-dp-dev-us-east-1-968504157731-artifacts",
         "snsTopicName": "Taas-api-poc-sns-notify",
         "slackEmail": "demo-aaaajnw4ewddias554wvk6jcfe@sd.org.slack.com",
         "orgEmail": "akhil.kanugolu@dish.com",

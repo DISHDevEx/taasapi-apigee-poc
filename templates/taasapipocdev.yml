@@ -2,6 +2,9 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: "Deploy TaasApi Resources"
 
 Parameters:
+  GlueJobScriptBucket:
+    Description: Name of the script bucket
+    Type: String
   ApplicationName:
     Description: Application
     Type: String
