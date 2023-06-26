@@ -153,6 +153,6 @@ Resources:
     Properties:
       Content:
         S3Bucket: !Sub ${GlueJobScriptBucket}
-        S3Key: !Sub "${ApplicationName}/glue/script/JiraLayer.zip
+        S3Key: !Sub "${ApplicationName}/glue/script/JiraLayer.zip"
       CompatibleRuntimes:
         - python3.8
