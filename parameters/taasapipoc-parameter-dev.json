@@ -6,7 +6,10 @@
         "firstLambdaName": "taasapi-response-cft-lambda",
         "secondLambdaName": "taasapi-response-cft-lambda",
         "thirdLambdaName": "taasapi-response-cft-lambda",
-        "iamRoleName": "taasapi-lambda-cft-role-1" 
+        "iamRoleName": "taasapi-lambda-cft-role",
+        "firstConnectSubnet": "subnet-022b5c36739e95b34",
+        "firstConnectsg": "sg-0bc7d6312b97d38eb",
+        "secondConnectsg": "sg-0314d53083f49fe09"
 
     }
 }

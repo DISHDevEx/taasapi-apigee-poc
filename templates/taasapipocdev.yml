@@ -23,6 +23,15 @@ Parameters:
   thirdLambdaName:
     Description: Third Lambda Name
     Type: String
+  firstConnectSubnet:
+    Description: Subnet
+    Type: String
+  firstConnectsg:
+    Description: sg1
+    Type: String
+  secondConnectsg:
+    Description: sg2
+    Type: String
 
 Resources:
   #SNS Topic
@@ -85,10 +94,10 @@ Resources:
         - !Ref TaasJiraLayer
       VpcConfig:
         SecurityGroupIds:
-          - sg-0bc7d6312b97d38eb
-          - sg-0314d53083f49fe09
+          - !Ref firstConnectsg
+          - !Ref secondConnectsg
         SubnetIds:
-          - subnet-022b5c36739e95b34
+          - !Ref firstConnectSubnet
 
   UpdateLambdaFunction:
     Type: AWS::Lambda::Function
@@ -116,7 +125,7 @@ Resources:
   MyLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Ref iamRoleNam
+      RoleName: !Ref iamRoleName
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
