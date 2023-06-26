@@ -1,0 +1,393 @@
+openapi: 3.0.0
+info:
+  title: Taas API PoC
+  description: |-
+    Taas API PoC
+    Can Able to trigger Multiple Test Engine from same ApI
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: taasapi@dish.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1"
+externalDocs:
+  description: Find out more about taas API
+  url: https://dish-wireless-network.atlassian.net/wiki/spaces/MSS/pages/381517837/TAAS+API
+servers:
+- url: https://dev.api.dishcloud.io/wireless/v1/taasapipoc
+  description: APIGEE TAAS API DEV SERVER 
+- url: https://localhost:55555
+
+tags:
+- name: Test Execution
+- name: Test Results
+- name: Test Types
+paths:
+  /trigger:
+    summary: "Test Executions, get and post jobs using Keysight Engine"
+    post:
+      tags:
+      - Test Execution
+      summary: Keysight test cases execution
+      parameters:
+      - name: Enterprise Network Env Name
+        in: query
+        description: This is the tag or label name of the Network
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: Dish-Enterprise-01
+      - name: Test case label
+        in: query
+        description: This is the tag or label for the group of test cases execution
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: Lightview_Camera_test
+      responses:
+        "200":
+          description: Request success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Invalid or Bad request
+        "500":
+          description: Server is not reachable
+
+  /testresults:
+    get:
+      tags:
+        - Test Results
+      summary: Get a list of test results
+      operationId: getTestsResults
+      parameters:
+        - in: query
+          name: timeInterval
+          schema:
+            type: string
+            enum:
+              - Last15Min
+              - LastHour
+              - Last3Hours
+              - Last6Hours
+              - Last12Hours
+              - LastDay
+              - Today
+              - LastWeek
+              - CurrentWeek
+              - PreviousWeek
+              - LastMonth
+              - CurrentMonth
+              - PreviousMonth
+            default: LastDay
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: probeFrom
+          schema:
+            type: string
+        - in: query
+          name: probeTo
+          schema:
+            type: string
+        - in: query
+          name: destination
+          schema:
+            type: string
+        - in: query
+          name: site
+          schema:
+            type: string
+        - in: query
+          name: mesh
+          schema:
+            type: string
+        - in: query
+          name: meshId
+          schema:
+            type: integer
+        - in: query
+          name: module
+          schema:
+            type: string
+            enum:
+              - N2N
+              - RealService
+              - ContinuousService
+              - MESH
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - Passed
+              - Failed
+              - Error
+        - in: query
+          name: testId
+          schema:
+            type: integer
+        - in: query
+          name: testTag
+          schema:
+            type: string
+        - in: query
+          name: testType
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Limits the number of returned results. max limit - 500
+          required: false
+          schema:
+            default: 100
+            type: integer
+            format: int32
+            maximum: 500
+        - name: offset
+          in: query
+          required: false
+          schema:
+            default: 0
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Tests Results
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      total_count:
+                        type: integer
+                      count:
+                        type: integer
+                      limit:
+                        type: integer
+                      offset:
+                        type: integer
+                      has_more:
+                        type: integer
+                        enum:
+                          - 0
+                          - 1
+                  - type: object
+                    properties:
+                      records:
+                        type: array
+                        items:
+                          allOf:
+                            - type: object
+                              properties:
+                                id:
+                                  type: string
+                                date:
+                                  type: string
+                                  format: date-time
+                                duration:
+                                  type: integer
+                                meshId:
+                                  type: integer
+                                module:
+                                  type: string
+                                  enum:
+                                    - N2N
+                                    - RealService
+                                probeFrom:
+                                  type: string
+                                probeTo:
+                                  type: string
+                                reasonCause:
+                                  type: string
+                                status:
+                                  type: string
+                                  enum:
+                                    - Passed
+                                    - Failed
+                                    - Error
+                                testId:
+                                  type: integer
+                                parameters:
+                                  type: string
+                                testTag:
+                                  type: string
+                                testType:
+                                  type: string
+
+        '400':
+          description: Parameters or body were in an incorrect format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Friendly error message explaining reason
+                  code:
+                    description: |
+                      * 404 NotFound - The URI was not found / Resource unavailable
+                      * 400 BadRequest - Incorrect format
+                      * 401 Unauthorized - Authentication information is missing or invalid
+                      * 403 Forbidden - Not authorized to access/update specific resource
+                    type: string
+                    enum:
+                      - 404 NotFound
+                      - 400 BadRequest
+                      - 401 Unauthorized
+                      - 403 Forbidden
+          
+          
+        '401':
+          description: Authentication information is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1testresults/get/responses/400/content/application~1json/schema'
+          
+  /testtypes:
+    get:
+      tags:
+        - Test Types
+      summary: Get All Test Types
+      operationId: getAllTesttypes
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: testTypeEngine
+          schema:
+            type: string
+            enum:
+              - NodeToNode
+              - RealService
+              - ContinuousService
+        - name: limit
+          in: query
+          description: Limits the number of returned results. max limit - 500
+          required: false
+          schema:
+            default: 100
+            type: integer
+            format: int32
+            maximum: 500
+        - name: offset
+          in: query
+          required: false
+          schema:
+            default: 0
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: List of Test Types
+          content:
+            application/json:
+              schema:
+                allOf: 
+                  - $ref: '#/paths/~1testresults/get/responses/200/content/application~1json/schema/allOf/0'
+                  - type: object
+                    properties:
+                      records:
+                        type: array
+                        items:
+                          allOf:
+                            - type: object
+                              properties:
+                                id:
+                                  type: integer
+                                name:
+                                  type: string
+                                testTypeEngine:
+                                  $ref: '#/paths/~1testtypes/get/parameters/1/schema'
+                                availableForMesh:
+                                  type: integer
+                                  enum:
+                                    - 0
+                                    - 1
+                                description:
+                                  type: string
+        '401':
+          $ref: '#/paths/~1testresults/get/responses/401'
+
+  /orgtests:
+    get:
+      tags:
+      - Test Types
+      summary: Keysight test cases execution
+      parameters:
+      - name: Enterprise Network Env Name
+        in: query
+        description: This is the tag or label name of the Network
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: Dish-Enterprise-01
+      
+      responses:
+        "200":
+          description: Request success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: Invalid or Bad request
+        "500":
+          description: Server is not reachable
+
+components:
+  schemas:
+    inline_response_200:
+      properties:
+        Test_Execute_Status:
+          type: string
+          example: Running
+          enum:
+          - Running
+          - Failed
+          - Success
+    inline_response_200_1:
+      properties:
+        Test_Execute_id:
+          type: string
+          example: 12342234-Keysight-Hawkeye
+        Jira_ticket:
+          type: object
+          
+          
+    inline_response_200_2:
+      properties:
+        Test_Summary:
+          type: string
+          example: keysight-client1-videostreaming
+        Test_case_label:
+          type: string
+          example: video
+          
+       
