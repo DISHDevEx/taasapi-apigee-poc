@@ -20,35 +20,32 @@ servers:
 - url: https://localhost:55555
 
 tags:
-- name: Test Execution
+- name: Test Cases
+- name: Test Cases Execution
 - name: Test Results
 - name: Test Types
+
 paths:
   /trigger:
     summary: "Test Executions, get and post jobs using Keysight Engine"
     post:
       tags:
-      - Test Execution
-      summary: Keysight test cases execution
-      parameters:
-      - name: Enterprise Network Env Name
-        in: query
-        description: This is the tag or label name of the Network
+      - Test Cases Execution
+      summary: Trigger the available Test Cases of the Enterprise based on the label 
+      requestBody:
         required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Dish-Enterprise-01
-      - name: Test case label
-        in: query
-        description: This is the tag or label for the group of test cases execution
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Lightview_Camera_test
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Enterprise:
+                  type: string
+                  example: dish-enterprise-01
+                Test_Label:
+                  type: string
+                  example: Lightview_Camera_test
+
       responses:
         "200":
           description: Request success
@@ -268,7 +265,7 @@ paths:
     get:
       tags:
         - Test Types
-      summary: Get All Test Types
+      summary: Get All Test Types available in the Test Corpus
       operationId: getAllTesttypes
       parameters:
         - in: query
@@ -306,7 +303,7 @@ paths:
             application/json:
               schema:
                 allOf: 
-                  - $ref: '#/paths/~1testresults/get/responses/200/content/application~1json/schema/allOf/0'
+                  # - $ref: '#/paths/~1testresults/get/responses/200/content/application~1json/schema/allOf/0'
                   - type: object
                     properties:
                       records:
@@ -334,10 +331,10 @@ paths:
   /orgtests:
     get:
       tags:
-      - Test Types
-      summary: Keysight test cases execution
+      - Test Cases
+      summary: Get All Test Cases available for the Enterprise to execute
       parameters:
-      - name: Enterprise Network Env Name
+      - name: Enterprise
         in: query
         description: This is the tag or label name of the Network
         required: true
@@ -353,9 +350,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/inline_response_200_2'
+                type: object
+                properties:
+                  orgtest:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/inline_response_200_2'
         "400":
           description: Invalid or Bad request
         "500":
@@ -372,21 +372,23 @@ components:
           - Running
           - Failed
           - Success
+          
     inline_response_200_1:
       properties:
-        Test_Execute_id:
+        Jira Ticket:
           type: string
-          example: 12342234-Keysight-Hawkeye
-        Jira_ticket:
-          type: object
+          example: XXX-XXXX
+        Jira Ticket Type:
+          type: string
+          example: Existing Ticket
           
           
     inline_response_200_2:
       properties:
-        Test_Summary:
+        Summary:
           type: string
-          example: keysight-client1-videostreaming
-        Test_case_label:
+          example: dish-enterprise-01-test_label
+        Test_Label:
           type: string
           example: video
           
